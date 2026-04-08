@@ -1,0 +1,475 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary);background:transparent}
+.page{max-width:880px;margin:0 auto;padding:1.5rem 1rem}
+.hdr{border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:1rem;margin-bottom:1.25rem}
+.hdr h1{font-size:19px;font-weight:500;margin-bottom:3px}
+.hdr p{font-size:12px;color:var(--color-text-secondary)}
+.tabs{display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap}
+.tab{padding:6px 13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);transition:all .15s}
+.tab.active{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
+.panel{display:none}.panel.active{display:block}
+.sec-title{font-size:15px;font-weight:500;margin-bottom:1rem;padding-bottom:6px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sec{margin-bottom:2rem}
+.kw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:7px;margin-bottom:.5rem}
+.kw-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:9px 11px;border:0.5px solid var(--color-border-tertiary)}
+.kw-term{font-size:12px;font-weight:500;color:var(--color-text-info);margin-bottom:2px}
+.kw-def{font-size:11px;color:var(--color-text-secondary);line-height:1.5}
+.eq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:7px}
+.eq-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:9px 12px;border:0.5px solid var(--color-border-tertiary)}
+.eq-f{font-size:14px;font-weight:500;font-family:var(--font-mono);margin-bottom:3px}
+.eq-w{font-size:11px;color:var(--color-text-secondary)}
+.sa-item{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:11px 13px;margin-bottom:7px}
+.sa-stmt{font-size:13px;margin-bottom:9px;line-height:1.5}
+.sa-btns{display:flex;gap:7px}
+.sb{padding:4px 12px;border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);transition:all .15s}
+.sb:hover{background:var(--color-background-secondary)}
+.sb.green{background:var(--color-background-success);color:var(--color-text-success);border-color:var(--color-border-success)}
+.sb.amber{background:var(--color-background-warning);color:var(--color-text-warning);border-color:var(--color-border-warning)}
+.sb.red{background:var(--color-background-danger);color:var(--color-text-danger);border-color:var(--color-border-danger)}
+.sa-sum{margin-top:.75rem;padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:12px;display:none}
+.qblock{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:13px 15px;margin-bottom:9px}
+.q-label{font-size:11px;font-weight:500;color:var(--color-text-secondary);margin-bottom:5px;letter-spacing:.04em}
+.grade-badge{display:inline-block;padding:2px 8px;border-radius:var(--border-radius-md);font-size:11px;font-weight:500;margin-left:8px}
+.g1{background:#EAF3DE;color:#27500A}.g2{background:#EAF3DE;color:#27500A}
+.g3{background:#FAEEDA;color:#633806}.g4{background:#FAEEDA;color:#633806}
+.g5{background:#FAEEDA;color:#633806}.g6{background:#E6F1FB;color:#0C447C}
+.g7{background:#E6F1FB;color:#0C447C}.g8{background:#EEEDFE;color:#3C3489}
+.g9{background:#FCEBEB;color:#791F1F}
+.q-text{font-size:13px;line-height:1.6;margin-bottom:8px}
+.q-marks{font-size:11px;color:var(--color-text-secondary);margin-bottom:8px}
+.q-inp{width:100%;min-height:72px;padding:7px 9px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:12px;font-family:var(--font-sans);resize:vertical;background:var(--color-background-primary);color:var(--color-text-primary);line-height:1.5}
+.q-inp:focus{outline:none;border-color:var(--color-border-info)}
+.btn-row{display:flex;gap:7px;margin-top:8px;flex-wrap:wrap}
+.btn{padding:5px 14px;border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);transition:all .15s}
+.btn:hover{background:var(--color-background-secondary)}
+.btn.pri{background:var(--color-background-info);color:var(--color-text-info);border-color:var(--color-border-info)}
+.fb{margin-top:9px;padding:9px 11px;border-radius:var(--border-radius-md);font-size:12px;line-height:1.6;display:none}
+.fb.show{display:block}
+.fb-score{font-weight:500;margin-bottom:5px}
+.fb-ms{margin-top:7px}
+.fb-model{margin-top:7px;padding:8px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:12px;line-height:1.5;display:none}
+.fb-model.show{display:block}
+.legend{display:flex;gap:10px;margin-bottom:10px;font-size:12px;color:var(--color-text-secondary)}
+.ldot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px}
+.prog-bar{height:6px;background:var(--color-background-secondary);border-radius:3px;margin:1rem 0;overflow:hidden}
+.prog-fill{height:100%;background:var(--color-background-info);border-radius:3px;transition:width .3s}
+.summary-area{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;border:0.5px solid var(--color-border-tertiary);margin-top:1rem}
+.sum-ta{width:100%;min-height:420px;background:transparent;border:none;font-family:var(--font-mono);font-size:11px;color:var(--color-text-primary);resize:vertical;outline:none;line-height:1.7}
+.copy-btn{margin-top:7px;padding:5px 13px;border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary)}
+.score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
+.score-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;text-align:center}
+.score-card .sc-val{font-size:22px;font-weight:500;margin-bottom:2px}
+.score-card .sc-lbl{font-size:11px;color:var(--color-text-secondary)}
+</style>
+
+<div class="page">
+<div class="hdr">
+  <h1>Pearson Edexcel GCSE Physics — Unit 1 (4PH0/01)</h1>
+  <p>Static electricity · Current electricity · Electrical components &nbsp;|&nbsp; Key words · Equations · Self-assessment · Challenge questions · Summary</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('static',this)">Static electricity</button>
+  <button class="tab" onclick="showTab('current',this)">Current electricity</button>
+  <button class="tab" onclick="showTab('components',this)">Electrical components</button>
+  <button class="tab" onclick="showTab('challenge',this)">Challenge questions</button>
+  <button class="tab" onclick="showTab('summary',this)">Summary &amp; copy</button>
+</div>
+
+<div id="panel-static" class="panel active">
+  <div class="sec"><div class="sec-title">Key words</div><div class="kw-grid" id="kw-static"></div></div>
+  <div class="sec"><div class="sec-title">Key equations</div><div class="eq-grid" id="eq-static"></div></div>
+  <div class="sec">
+    <div class="sec-title">Self-assessment</div>
+    <div class="legend"><span><span class="ldot" style="background:var(--color-background-success)"></span>Confident</span><span><span class="ldot" style="background:var(--color-background-warning)"></span>Nearly there</span><span><span class="ldot" style="background:var(--color-background-danger)"></span>Need to revisit</span></div>
+    <div id="sa-static"></div><div class="sa-sum" id="sasum-static"></div>
+  </div>
+  <div class="sec"><div class="sec-title">Practice questions</div><div id="pq-static"></div></div>
+</div>
+
+<div id="panel-current" class="panel">
+  <div class="sec"><div class="sec-title">Key words</div><div class="kw-grid" id="kw-current"></div></div>
+  <div class="sec"><div class="sec-title">Key equations</div><div class="eq-grid" id="eq-current"></div></div>
+  <div class="sec">
+    <div class="sec-title">Self-assessment</div>
+    <div class="legend"><span><span class="ldot" style="background:var(--color-background-success)"></span>Confident</span><span><span class="ldot" style="background:var(--color-background-warning)"></span>Nearly there</span><span><span class="ldot" style="background:var(--color-background-danger)"></span>Need to revisit</span></div>
+    <div id="sa-current"></div><div class="sa-sum" id="sasum-current"></div>
+  </div>
+  <div class="sec"><div class="sec-title">Practice questions</div><div id="pq-current"></div></div>
+</div>
+
+<div id="panel-components" class="panel">
+  <div class="sec"><div class="sec-title">Key words</div><div class="kw-grid" id="kw-components"></div></div>
+  <div class="sec"><div class="sec-title">Key equations</div><div class="eq-grid" id="eq-components"></div></div>
+  <div class="sec">
+    <div class="sec-title">Self-assessment</div>
+    <div class="legend"><span><span class="ldot" style="background:var(--color-background-success)"></span>Confident</span><span><span class="ldot" style="background:var(--color-background-warning)"></span>Nearly there</span><span><span class="ldot" style="background:var(--color-background-danger)"></span>Need to revisit</span></div>
+    <div id="sa-components"></div><div class="sa-sum" id="sasum-components"></div>
+  </div>
+  <div class="sec"><div class="sec-title">Practice questions</div><div id="pq-components"></div></div>
+</div>
+
+<div id="panel-challenge" class="panel">
+  <div class="sec">
+    <div class="sec-title">Challenge questions — grades 1 to 9</div>
+    <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:1rem;">Five questions per topic, increasing in difficulty from grade 1 (recall) to grade 9 (extended reasoning). Answer each question, then mark it or reveal the model answer.</p>
+    <div class="score-grid">
+      <div class="score-card"><div class="sc-val" id="ch-done">0</div><div class="sc-lbl">Questions attempted</div></div>
+      <div class="score-card"><div class="sc-val" id="ch-score">0</div><div class="sc-lbl">Marks scored</div></div>
+      <div class="score-card"><div class="sc-val" id="ch-total">0</div><div class="sc-lbl">Marks available</div></div>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="ch-prog" style="width:0%"></div></div>
+  </div>
+  <div class="sec">
+    <div class="sec-title">Static electricity</div>
+    <div id="ch-static"></div>
+  </div>
+  <div class="sec">
+    <div class="sec-title">Current electricity</div>
+    <div id="ch-current"></div>
+  </div>
+  <div class="sec">
+    <div class="sec-title">Electrical components</div>
+    <div id="ch-components"></div>
+  </div>
+</div>
+
+<div id="panel-summary" class="panel">
+  <div class="sec">
+    <div class="sec-title">Summary — copy &amp; paste into your form or document</div>
+    <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:1rem;">Click generate to compile all your self-assessment ratings, practice answers, and challenge question attempts into a single block of text ready to paste into Google Forms, Word, or any document.</p>
+    <button class="btn pri" onclick="generateSummary()">Generate summary</button>
+    <div id="sum-area" style="display:none" class="summary-area">
+      <textarea class="sum-ta" id="sum-text" readonly></textarea>
+      <button class="copy-btn" onclick="copySummary()">Copy to clipboard</button>
+      <span id="copy-ok" style="font-size:11px;color:var(--color-text-success);margin-left:8px;display:none">Copied!</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const KW={
+  static:[
+    {t:"Static electricity",d:"Build-up of electric charge on an insulator's surface, caused by friction transferring electrons."},
+    {t:"Charge",d:"Property of matter — positive (+) or negative (−). Like charges repel; unlike charges attract."},
+    {t:"Electron",d:"Negatively charged sub-atomic particle. Transferred between materials by friction."},
+    {t:"Insulator",d:"Material in which electrons cannot move freely, so charge accumulates on the surface."},
+    {t:"Conductor",d:"Material through which electrons flow freely, allowing charge to move and dissipate."},
+    {t:"Electrostatic force",d:"Attractive or repulsive force between charged objects."},
+    {t:"Earthing",d:"Connecting a charged object to the ground so excess charge flows safely away."},
+    {t:"Electric field",d:"Region around a charged object where a force acts on other charges. Field lines show force direction on a positive charge."},
+    {t:"Charging by induction",d:"Charging a conductor without direct contact, by rearranging charges near a charged object."}
+  ],
+  current:[
+    {t:"Current (I)",d:"Rate of flow of electric charge; unit: ampere (A). Conventional current flows + to −."},
+    {t:"Voltage / p.d. (V)",d:"Potential difference — energy transferred per unit charge; unit: volt (V)."},
+    {t:"Resistance (R)",d:"Opposition to current flow; unit: ohm (Ω). Caused by collisions of electrons with lattice ions."},
+    {t:"Ohm's law",d:"For a metallic conductor at constant temperature, current is directly proportional to voltage: V = IR."},
+    {t:"Series circuit",d:"Single loop — same current everywhere; voltages add; total resistance = sum of resistances."},
+    {t:"Parallel circuit",d:"Separate branches — same voltage across each; currents add; total resistance less than any branch."},
+    {t:"E.m.f.",d:"Electromotive force — energy supplied by a source per unit charge; unit: volt (V)."},
+    {t:"Direct current (d.c.)",d:"Current always flowing in the same direction (e.g. from a battery)."},
+    {t:"Alternating current (a.c.)",d:"Current that periodically reverses direction. UK mains: 230 V, 50 Hz."},
+    {t:"Ammeter",d:"Measures current; connected in series; very low resistance."},
+    {t:"Voltmeter",d:"Measures p.d.; connected in parallel; very high resistance."}
+  ],
+  components:[
+    {t:"Ohmic conductor",d:"Component where V and I are proportional at constant temperature — straight line through origin on I–V graph."},
+    {t:"Filament bulb",d:"Non-ohmic: resistance increases with temperature, giving a curved I–V graph."},
+    {t:"Diode",d:"Allows current in one direction only (forward bias). Very high resistance in reverse."},
+    {t:"LED",d:"Light-emitting diode — emits light when forward biased. More efficient than filament bulbs."},
+    {t:"Thermistor",d:"Resistance decreases as temperature increases (NTC). Used in temperature sensors."},
+    {t:"LDR",d:"Light-dependent resistor — resistance decreases as light intensity increases. Used in automatic lighting."},
+    {t:"Variable resistor",d:"Resistance adjusted manually to control current in a circuit."},
+    {t:"I–V characteristic",d:"Graph of current vs voltage for a component — shows how it behaves across different conditions."}
+  ]
+};
+
+const EQ={
+  static:[
+    {f:"Q = I × t",w:"Charge (C) = Current (A) × Time (s) — used when charge flows during discharge"},
+    {f:"No extra equations",w:"Static electricity is a mostly qualitative topic — focus on explanations and field diagrams"}
+  ],
+  current:[
+    {f:"V = I × R",w:"Voltage (V) = Current (A) × Resistance (Ω)"},
+    {f:"Q = I × t",w:"Charge (C) = Current (A) × Time (s)"},
+    {f:"P = I × V",w:"Power (W) = Current (A) × Voltage (V)"},
+    {f:"P = I² × R",w:"Power (W) = Current² × Resistance (Ω)"},
+    {f:"E = I × V × t",w:"Energy (J) = Current × Voltage × Time"},
+    {f:"R_total = R₁ + R₂",w:"Total resistance in series"},
+    {f:"1/R = 1/R₁ + 1/R₂",w:"Total resistance in parallel — reciprocal sum"}
+  ],
+  components:[
+    {f:"V = I × R",w:"Used to find resistance at any point on an I–V graph"},
+    {f:"R = V / I",w:"Resistance (Ω) = Voltage (V) ÷ Current (A)"},
+    {f:"P = I × V",w:"Power dissipated in a component"}
+  ]
+};
+
+const SA={
+  static:[
+    "I can explain why rubbing two insulators causes one to become positive and one negative.",
+    "I can describe what happens to electrons when objects are charged by friction.",
+    "I can explain why only insulators hold a static charge on their surface.",
+    "I can describe the forces between similarly charged and oppositely charged objects.",
+    "I can draw and interpret electric field patterns around a charged sphere and between parallel plates.",
+    "I can explain the risks of static electricity and how earthing reduces them.",
+    "I can describe a practical application of static electricity.",
+    "I can use Q = It to calculate charge flowing during a discharge."
+  ],
+  current:[
+    "I can state that current is the rate of flow of charge and give its unit.",
+    "I can use V = IR to calculate voltage, current, or resistance.",
+    "I can calculate total resistance in series.",
+    "I can calculate total resistance in parallel.",
+    "I can describe how current and voltage behave in series vs parallel circuits.",
+    "I can explain the difference between e.m.f. and potential difference.",
+    "I can distinguish between d.c. and a.c.",
+    "I can use P = IV and E = IVt to solve power and energy problems.",
+    "I can describe how to use an ammeter and voltmeter correctly."
+  ],
+  components:[
+    "I can describe I–V graph shapes for a resistor, filament bulb, and diode.",
+    "I can explain why a filament bulb's resistance increases when hotter.",
+    "I can state that a diode only allows current in one direction.",
+    "I can explain how a thermistor's resistance changes with temperature and give a use.",
+    "I can explain how an LDR's resistance changes with light intensity and give a use.",
+    "I can use R = V/I to find resistance from an I–V graph.",
+    "I can describe how to set up a circuit to obtain I–V data for a component.",
+    "I can compare the efficiency of an LED with a filament bulb."
+  ]
+};
+
+const PQ={
+  static:[
+    {q:"A plastic rod is rubbed with a cloth. Explain why the rod becomes negatively charged. (3 marks)",marks:3,ms:["Electrons transferred from cloth to rod [1]","Rod gains electrons [1]","Electrons are negatively charged so rod becomes negative [1]"],model:"Friction causes electrons to transfer from the cloth to the plastic rod. Because electrons carry negative charge, the rod gains extra electrons and becomes negatively charged. The cloth, having lost electrons, becomes positively charged."},
+    {q:"Describe two risks caused by static electricity in industry and explain how each is reduced. (4 marks)",marks:4,ms:["Risk 1: sparks from static igniting fuel vapour [1]; earthing the tanker allows charge to flow away safely [1]","Risk 2: static build-up on aircraft [1]; conducting tyres / earthing on landing [1]"],model:"Risk 1 — Friction between fuel and pipe can build up static charge, creating a spark that could ignite fuel vapour. Earthing the tanker with a conducting strap allows charge to flow safely to earth. Risk 2 — Aircraft build up static charge moving through air. Conducting rubber tyres or an earth strap during refuelling allow charge to dissipate safely."},
+    {q:"A Van de Graaff generator carries a charge of 0.004 C that builds up over 20 s. Calculate the average current. (2 marks)",marks:2,ms:["I = Q/t [1]","I = 0.004 ÷ 20 = 0.0002 A [1]"],model:"Using Q = I × t, rearranged: I = Q ÷ t = 0.004 ÷ 20 = 0.0002 A (2 × 10⁻⁴ A)."}
+  ],
+  current:[
+    {q:"A resistor has 12 V across it and 0.5 A through it. Calculate its resistance. (2 marks)",marks:2,ms:["R = V/I [1]","R = 12 ÷ 0.5 = 24 Ω [1]"],model:"R = V ÷ I = 12 ÷ 0.5 = 24 Ω."},
+    {q:"Two resistors of 6 Ω and 3 Ω are connected in parallel. Calculate the total resistance. Show your working. (3 marks)",marks:3,ms:["1/R = 1/6 + 1/3 [1]","1/R = 1/6 + 2/6 = 3/6 [1]","R = 2 Ω [1]"],model:"1/R_total = 1/6 + 1/3 = 1/6 + 2/6 = 3/6. So R_total = 2 Ω."},
+    {q:"A 60 W lamp is connected to 230 V mains. Calculate the current. (2 marks)",marks:2,ms:["I = P/V [1]","I = 60 ÷ 230 = 0.26 A [1]"],model:"I = P ÷ V = 60 ÷ 230 = 0.261 A ≈ 0.26 A."},
+    {q:"Explain the difference between e.m.f. and potential difference. (2 marks)",marks:2,ms:["E.m.f. is energy supplied by source per unit charge [1]","P.d. is energy transferred by a component per unit charge [1]"],model:"E.m.f. is the total energy supplied by a cell per coulomb of charge — the 'push' it gives charges around the circuit. Potential difference is the energy transferred per coulomb as charges pass through a specific component such as a resistor."}
+  ],
+  components:[
+    {q:"Describe the I–V graph shape for (a) a fixed resistor and (b) a filament lamp, and explain the difference. (4 marks)",marks:4,ms:["(a) Straight line through origin — proportional [1]","(b) Curve, gradient decreases as voltage increases [1]","Filament gets hotter as current increases [1]","Higher temperature → greater resistance → less current per volt [1]"],model:"(a) Fixed resistor: straight line through origin — current proportional to voltage (ohmic). (b) Filament bulb: curve that flattens at higher voltages. As current increases the filament heats up, causing greater vibration of lattice ions, more electron collisions, and therefore higher resistance."},
+    {q:"Describe what happens in a diode when voltage is (a) applied in the forward direction and (b) applied in reverse. (3 marks)",marks:3,ms:["(a) No current below threshold (~0.6 V) [1]; current rises steeply above threshold [1]","(b) Virtually no current — very high resistance [1]"],model:"(a) Forward bias: below ~0.6 V almost no current. Above this threshold the diode conducts freely and current rises steeply. (b) Reverse bias: virtually no current flows — the diode has extremely high resistance and blocks current."},
+    {q:"Explain how a thermistor's resistance changes with temperature and why this makes it useful in a thermostat. (3 marks)",marks:3,ms:["Resistance decreases as temperature increases [1]","More charge carriers available at higher temperature [1]","Change in resistance changes current/voltage in circuit, triggering a switch [1]"],model:"As temperature rises, more electrons gain enough energy to become conduction electrons, so resistance falls. In a thermostat circuit, this fall in resistance changes the voltage or current in the sensing circuit, which can trigger a switch to turn a heater off when the target temperature is reached."}
+  ]
+};
+
+const CQ={
+  static:[
+    {grade:1,q:"State what is meant by the term 'static electricity'. (1 mark)",marks:1,ms:["A build-up of electric charge on the surface of an insulating material [1]"],model:"Static electricity is a build-up of electric charge on the surface of an insulator, caused by the transfer of electrons by friction."},
+    {grade:2,q:"Two charged rods repel each other. What does this tell you about the charges on the rods? (1 mark)",marks:1,ms:["Both rods carry the same type of charge (both positive or both negative) [1]"],model:"Like charges repel, so both rods must carry the same type of charge — either both positive or both negative."},
+    {grade:4,q:"Explain, in terms of electrons, why rubbing a polythene rod with a cloth makes the rod negatively charged and the cloth positively charged. (3 marks)",marks:3,ms:["Electrons transferred from cloth to rod by friction [1]","Rod gains electrons → becomes negative [1]","Cloth loses electrons → becomes positive [1]"],model:"Friction between the polythene rod and the cloth gives electrons enough energy to transfer from the cloth onto the rod. The rod gains electrons and so becomes negatively charged. The cloth loses electrons, leaving it with a positive charge. Overall charge is conserved."},
+    {grade:6,q:"A student charges a metal sphere by induction using a negatively charged rod. Describe the process step by step. (4 marks)",marks:4,ms:["Negatively charged rod brought near (not touching) sphere [1]","Free electrons in sphere repelled to far side (or away from rod) [1]","Sphere earthed — electrons flow to earth [1]","Earth removed, then rod removed — sphere left with net positive charge [1]"],model:"1. Bring the negatively charged rod close to (but not touching) the metal sphere. 2. Free electrons in the sphere are repelled and move to the far side of the sphere. 3. While the rod is still close, connect the sphere to earth — electrons flow from the sphere to earth. 4. Remove the earth connection, then remove the rod. The sphere is left with a net positive charge because it has lost electrons."},
+    {grade:9,q:"A paint spraying machine gives paint droplets a positive charge before they approach a metal car body which is earthed. Explain fully why this method produces a more even, less wasteful coat of paint than uncharged spraying. Your answer should include reference to electric field lines and the forces acting on the charged droplets. (6 marks)",marks:6,ms:["Charged droplets repel each other → droplets spread more evenly [1]","Car body earthed → electrons drawn to surface → car body becomes negatively charged (or induced negative) [1]","Opposite charges attract → droplets attracted towards the car body [1]","Electric field lines point from positive droplets to negative car surface → force on droplets directed towards surface [1]","Droplets wrap around to coat back surfaces / shielded areas due to field shape [1]","Less paint wasted as droplets attracted to car rather than escaping to surroundings [1]"],model:"The positively charged paint droplets repel one another, causing them to spread apart and produce a more even spray pattern. The earthed car body allows electrons to be drawn to its surface, inducing a negative charge. The opposite charges (positive droplets, negative car) attract each other — the electric field lines run from the droplets toward the car body, so the electrostatic force on each droplet is directed towards the car. This attraction means droplets are pulled onto the car surface even in hard-to-reach areas, as field lines curve around edges. Because the droplets are attracted to the car rather than drifting away, very little paint is wasted compared with uncharged spraying."}
+  ],
+  current:[
+    {grade:1,q:"State the unit of electrical resistance. (1 mark)",marks:1,ms:["Ohm (Ω) [1]"],model:"The unit of electrical resistance is the ohm (Ω)."},
+    {grade:3,q:"A current of 2 A flows through a 15 Ω resistor. Calculate the potential difference across it. (2 marks)",marks:2,ms:["V = IR [1]","V = 2 × 15 = 30 V [1]"],model:"V = I × R = 2 × 15 = 30 V."},
+    {grade:5,q:"A circuit contains two resistors in series: 8 Ω and 4 Ω, connected to a 12 V battery. Calculate (a) total resistance, (b) current in the circuit, and (c) the voltage across the 4 Ω resistor. (4 marks)",marks:4,ms:["R_total = 8 + 4 = 12 Ω [1]","I = V/R = 12/12 = 1 A [1]","V = IR = 1 × 4 = 4 V [1]","Correct working shown throughout [1]"],model:"(a) R_total = 8 + 4 = 12 Ω. (b) I = V ÷ R = 12 ÷ 12 = 1 A. (c) V across 4 Ω = I × R = 1 × 4 = 4 V."},
+    {grade:7,q:"A toaster rated at 1200 W is used for 3 minutes on a 230 V supply. Calculate (a) the current drawn, (b) the charge that flows, and (c) the energy transferred. (5 marks)",marks:5,ms:["I = P/V = 1200/230 = 5.22 A [1]","t = 3 × 60 = 180 s [1]","Q = It = 5.22 × 180 = 939.1 C [1]","E = Pt = 1200 × 180 = 216 000 J [1]","Correct units throughout [1]"],model:"(a) I = P ÷ V = 1200 ÷ 230 = 5.22 A. (b) t = 3 × 60 = 180 s; Q = I × t = 5.22 × 180 = 939 C. (c) E = P × t = 1200 × 180 = 216 000 J (216 kJ)."},
+    {grade:9,q:"A student investigates how the resistance of a wire changes with length. She finds that doubling the length doubles the resistance. She also knows that resistance is inversely proportional to cross-sectional area. A wire of length 1.2 m and radius 0.4 mm has a resistance of 3.8 Ω. Calculate the resistivity of the wire material and state its unit. Then explain, using a particle model, why increasing the length increases resistance. (6 marks)",marks:6,ms:["A = πr² = π × (0.4×10⁻³)² = 5.03×10⁻⁷ m² [1]","ρ = RA/L = (3.8 × 5.03×10⁻⁷) / 1.2 [1]","ρ = 1.59 × 10⁻⁶ Ω m [1]","Unit: Ω m [1]","Longer wire → electrons make more collisions with lattice ions [1]","More collisions → more opposition to flow → greater resistance [1]"],model:"A = π × (0.4 × 10⁻³)² = 5.03 × 10⁻⁷ m². ρ = RA ÷ L = (3.8 × 5.03 × 10⁻⁷) ÷ 1.2 = 1.59 × 10⁻⁶ Ω m. Unit: ohm-metres (Ω m). Particle model explanation: electrons drifting through a longer wire must travel a greater distance and therefore collide more frequently with the vibrating positive ions in the metal lattice. Each collision transfers energy and impedes the electrons' motion. More collisions per unit time means greater opposition to current flow, which we observe as higher resistance."}
+  ],
+  components:[
+    {grade:1,q:"Name the component whose resistance decreases as light intensity increases. (1 mark)",marks:1,ms:["LDR (light-dependent resistor) [1]"],model:"A light-dependent resistor (LDR) — its resistance decreases as light intensity increases."},
+    {grade:3,q:"Sketch the shape of the I–V graph for a diode and label the forward and reverse bias regions. (3 marks)",marks:3,ms:["Reverse bias region: current ≈ 0 for negative voltages [1]","No/very small current until threshold in forward bias [1]","Current rises steeply beyond threshold in forward bias [1]"],model:"The graph shows: in the negative voltage (reverse bias) region the line lies along the x-axis (virtually no current). At zero and small positive voltages there is still almost no current (below threshold ~0.6 V). Above the threshold in the forward bias region, current rises very steeply. The curve has an asymmetric shape — flat on the left, sharply rising on the right."},
+    {grade:5,q:"A student measures the current through a filament bulb at different voltages and records: 1 V → 0.5 A, 3 V → 1.0 A, 6 V → 1.4 A. Calculate the resistance at each voltage and explain the trend. (4 marks)",marks:4,ms:["R at 1 V = 1/0.5 = 2 Ω [1]","R at 3 V = 3/1.0 = 3 Ω [1]","R at 6 V = 6/1.4 = 4.3 Ω [1]","Resistance increases because higher current heats filament, causing greater lattice vibration and more collisions with electrons [1]"],model:"R = V ÷ I: at 1 V → 1 ÷ 0.5 = 2 Ω; at 3 V → 3 ÷ 1.0 = 3 Ω; at 6 V → 6 ÷ 1.4 = 4.3 Ω. The resistance increases because a greater current heats the tungsten filament to a higher temperature. At higher temperatures, the positive ions in the lattice vibrate more vigorously, causing more frequent collisions with the conduction electrons, which opposes the flow of current."},
+    {grade:7,q:"A thermistor (resistance 1200 Ω at 20 °C, 400 Ω at 60 °C) is placed in series with a fixed 600 Ω resistor and a 6 V battery. Calculate the voltage across the thermistor at each temperature and explain how this circuit could be used as a temperature sensor. (5 marks)",marks:5,ms:["V_therm at 20°C: total R = 1800 Ω; I = 6/1800 = 3.33 mA; V = 3.33×10⁻³×1200 = 4.0 V [1]","V_therm at 60°C: total R = 1000 Ω; I = 6/1000 = 6 mA; V = 6×10⁻³×400 = 2.4 V [1]","Correct use of voltage divider / series circuit equations [1]","As temperature increases, thermistor resistance falls, so voltage across it falls [1]","This changing voltage can be used to trigger a switching circuit / compared to a reference voltage [1]"],model:"At 20°C: total R = 1200 + 600 = 1800 Ω; I = 6 ÷ 1800 = 0.00333 A; V_therm = 0.00333 × 1200 = 4.0 V. At 60°C: total R = 400 + 600 = 1000 Ω; I = 6 ÷ 1000 = 0.006 A; V_therm = 0.006 × 400 = 2.4 V. As temperature rises, the thermistor's resistance decreases, so a smaller share of the 6 V is dropped across it. The changing voltage across the thermistor can be fed into a comparator circuit — when it drops below a set threshold, a switch activates to control a heater or alarm."},
+    {grade:9,q:"Compare and evaluate the use of an LED and a filament bulb as light sources in a torch. Your answer should include a discussion of their I–V characteristics, energy efficiency, and practical advantages and disadvantages. (6 marks)",marks:6,ms:["LED has threshold voltage (~2 V); current rises steeply; diode-like I–V characteristic [1]","Filament bulb: non-linear I–V, resistance increases with temperature [1]","LED converts most electrical energy to light; filament bulb loses most as heat [1]","LED more efficient → battery lasts longer [1]","LED: longer lifespan, more robust (solid-state), smaller [1]","Filament: produces more heat (disadvantage in torch), cheaper initially, no polarity concern [1]"],model:"I–V characteristics: an LED shows a diode-like I–V curve — negligible current below a threshold voltage (~2 V depending on colour), then a steep rise. A filament bulb shows a curved I–V graph that flattens at higher voltages, reflecting its increasing resistance as it heats up. Efficiency: the LED is far more efficient, converting around 40–50% of electrical energy to light; a filament bulb converts only about 5–10%, losing the rest as infrared radiation (heat). Practical advantages of LED: much longer lifespan (tens of thousands of hours vs ~1000 hours), more robust as a solid-state device with no fragile filament, smaller and lighter. Disadvantages of LED: must be connected the correct way (polarity-dependent), higher initial cost. Filament bulbs are simpler and cheaper initially but drain batteries faster, making them a poor choice for a portable torch."}
+  ]
+};
+
+const ratings={static:{},current:{},components:{}};
+const pqAnswers={static:{},current:{},components:{}};
+const chAnswers={static:{},current:{},components:{}};
+const chScores={static:{},current:{},components:{}};
+
+function showTab(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.className='panel');
+  document.querySelectorAll('.tab').forEach(b=>b.className='tab');
+  document.getElementById('panel-'+id).className='panel active';
+  btn.className='tab active';
+}
+
+function buildKW(topic){
+  const c=document.getElementById('kw-'+topic);
+  KW[topic].forEach(k=>{
+    const d=document.createElement('div');d.className='kw-card';
+    d.innerHTML=`<div class="kw-term">${k.t}</div><div class="kw-def">${k.d}</div>`;
+    c.appendChild(d);
+  });
+}
+function buildEQ(topic){
+  const c=document.getElementById('eq-'+topic);
+  EQ[topic].forEach(e=>{
+    const d=document.createElement('div');d.className='eq-card';
+    d.innerHTML=`<div class="eq-f">${e.f}</div><div class="eq-w">${e.w}</div>`;
+    c.appendChild(d);
+  });
+}
+function buildSA(topic){
+  const c=document.getElementById('sa-'+topic);
+  SA[topic].forEach((stmt,i)=>{
+    const d=document.createElement('div');d.className='sa-item';
+    d.id='sai-'+topic+'-'+i;
+    d.innerHTML=`<div class="sa-stmt">${i+1}. ${stmt}</div><div class="sa-btns">
+      <button class="sb" onclick="rate('${topic}',${i},'green',this)">Confident</button>
+      <button class="sb" onclick="rate('${topic}',${i},'amber',this)">Nearly there</button>
+      <button class="sb" onclick="rate('${topic}',${i},'red',this)">Need to revisit</button>
+    </div>`;
+    c.appendChild(d);
+  });
+}
+function rate(topic,i,col,btn){
+  ratings[topic][i]=col;
+  const item=document.getElementById('sai-'+topic+'-'+i);
+  item.querySelectorAll('.sb').forEach(b=>b.className='sb');
+  btn.className='sb '+col;
+  const done=Object.keys(ratings[topic]).length;
+  const g=Object.values(ratings[topic]).filter(v=>v==='green').length;
+  const a=Object.values(ratings[topic]).filter(v=>v==='amber').length;
+  const r=Object.values(ratings[topic]).filter(v=>v==='red').length;
+  const el=document.getElementById('sasum-'+topic);
+  el.style.display='block';
+  el.innerHTML=`Rated ${done}/${SA[topic].length} — <span style="color:var(--color-text-success)">Confident: ${g}</span> · <span style="color:var(--color-text-warning)">Nearly there: ${a}</span> · <span style="color:var(--color-text-danger)">Need to revisit: ${r}</span>`;
+}
+
+function buildPQ(topic){
+  const c=document.getElementById('pq-'+topic);
+  PQ[topic].forEach((q,i)=>c.appendChild(makeQBlock(q,i,'pq',topic)));
+}
+
+function buildCH(topic){
+  const c=document.getElementById('ch-'+topic);
+  CQ[topic].forEach((q,i)=>c.appendChild(makeQBlock(q,i,'ch',topic,q.grade)));
+}
+
+function makeQBlock(q,i,pfx,topic,grade){
+  const div=document.createElement('div');div.className='qblock';
+  const badge=grade?`<span class="grade-badge g${grade}">Grade ${grade}</span>`:'';
+  div.innerHTML=`<div class="q-label">Question ${i+1}${badge}</div>
+    <div class="q-text">${q.q}</div>
+    <textarea class="q-inp" id="${pfx}-inp-${topic}-${i}" placeholder="Write your answer here..." oninput="storeAns('${pfx}','${topic}',${i},this.value)"></textarea>
+    <div class="btn-row">
+      <button class="btn pri" onclick="markQ('${pfx}','${topic}',${i})">Mark my answer</button>
+      <button class="btn" onclick="showModel('${pfx}','${topic}',${i})">Show model answer</button>
+    </div>
+    <div class="fb" id="${pfx}-fb-${topic}-${i}">
+      <div class="fb-score" id="${pfx}-fbs-${topic}-${i}"></div>
+      <div id="${pfx}-fbms-${topic}-${i}"></div>
+      <div class="fb-model" id="${pfx}-fbm-${topic}-${i}"></div>
+    </div>`;
+  return div;
+}
+
+function storeAns(pfx,topic,i,val){
+  if(pfx==='pq')pqAnswers[topic][i]=val;
+  else chAnswers[topic][i]=val;
+}
+
+function getQ(pfx,topic,i){return pfx==='pq'?PQ[topic][i]:CQ[topic][i];}
+
+function markQ(pfx,topic,i){
+  const q=getQ(pfx,topic,i);
+  const ans=(document.getElementById(pfx+'-inp-'+topic+'-'+i).value||'').toLowerCase();
+  let scored=0;
+  let det='<div class="fb-ms"><strong style="font-weight:500">Mark scheme:</strong><ul style="margin:5px 0 0 14px;font-size:11px;line-height:1.8">';
+  q.ms.forEach(ms=>{
+    const kw=ms.replace(/\[1\]/g,'').toLowerCase().split(/\b/).filter(w=>w.length>4);
+    const hit=kw.some(k=>ans.includes(k));
+    if(hit)scored++;
+    det+=`<li style="color:${hit?'var(--color-text-success)':'var(--color-text-danger)'}">${hit?'✓':'✗'} ${ms}</li>`;
+  });
+  det+='</ul><p style="margin-top:5px;font-size:11px;color:var(--color-text-secondary)">Keyword-based check — ask your teacher to review extended answers.</p></div>';
+  const fb=document.getElementById(pfx+'-fb-'+topic+'-'+i);
+  const fbs=document.getElementById(pfx+'-fbs-'+topic+'-'+i);
+  const fbms=document.getElementById(pfx+'-fbms-'+topic+'-'+i);
+  fb.className='fb show';
+  fb.style.background=scored===q.marks?'var(--color-background-success)':scored>0?'var(--color-background-warning)':'var(--color-background-danger)';
+  fbs.innerHTML=`Score: ${scored} / ${q.marks} mark${q.marks>1?'s':''}`;
+  fbs.style.color=scored===q.marks?'var(--color-text-success)':scored>0?'var(--color-text-warning)':'var(--color-text-danger)';
+  fbms.innerHTML=det;
+  if(pfx==='ch'){chScores[topic][i]=scored;updateCHStats();}
+}
+
+function showModel(pfx,topic,i){
+  const q=getQ(pfx,topic,i);
+  const fb=document.getElementById(pfx+'-fb-'+topic+'-'+i);
+  const fbm=document.getElementById(pfx+'-fbm-'+topic+'-'+i);
+  fb.className='fb show';
+  if(!fb.style.background)fb.style.background='var(--color-background-secondary)';
+  fbm.className='fb-model show';
+  fbm.innerHTML=`<strong style="font-weight:500;display:block;margin-bottom:3px">Model answer:</strong>${q.model}`;
+}
+
+function updateCHStats(){
+  let done=0,scored=0,avail=0;
+  ['static','current','components'].forEach(t=>{
+    CQ[t].forEach((q,i)=>{
+      avail+=q.marks;
+      if(chAnswers[t][i]!==undefined&&chAnswers[t][i]!==''){done++;}
+      if(chScores[t][i]!==undefined)scored+=chScores[t][i];
+    });
+  });
+  document.getElementById('ch-done').textContent=done;
+  document.getElementById('ch-score').textContent=scored;
+  document.getElementById('ch-total').textContent=avail;
+  document.getElementById('ch-prog').style.width=(avail>0?Math.round(scored/avail*100):0)+'%';
+}
+
+function generateSummary(){
+  let o='=== GCSE Physics Unit 1 — Electricity Revision Summary ===\n';
+  o+=`Date: ${new Date().toLocaleDateString('en-GB')}\n\n`;
+  ['static','current','components'].forEach(topic=>{
+    const label={static:'Static electricity',current:'Current electricity',components:'Electrical components'}[topic];
+    o+=`${'─'.repeat(50)}\n${label.toUpperCase()}\n${'─'.repeat(50)}\n\n`;
+    o+='SELF-ASSESSMENT:\n';
+    SA[topic].forEach((s,i)=>{
+      const col=ratings[topic][i]||'not rated';
+      const lbl={green:'Confident',amber:'Nearly there',red:'Need to revisit','not rated':'Not rated'}[col];
+      o+=`${i+1}. ${s}\n   → ${lbl}\n`;
+    });
+    o+='\nPRACTICE QUESTIONS:\n';
+    PQ[topic].forEach((q,i)=>{
+      o+=`Q${i+1}: ${q.q}\nMy answer: ${pqAnswers[topic][i]||'(not attempted)'}\nMark scheme:\n`;
+      q.ms.forEach(m=>o+=`  • ${m}\n`);
+      o+=`Model answer: ${q.model}\n\n`;
+    });
+    o+='\n';
+  });
+  o+=`${'─'.repeat(50)}\nCHALLENGE QUESTIONS (Grades 1–9)\n${'─'.repeat(50)}\n\n`;
+  ['static','current','components'].forEach(topic=>{
+    const label={static:'Static electricity',current:'Current electricity',components:'Electrical components'}[topic];
+    o+=`${label}:\n`;
+    CQ[topic].forEach((q,i)=>{
+      const sc=chScores[topic][i];
+      o+=`Grade ${q.grade} — Q${i+1}: ${q.q}\nMy answer: ${chAnswers[topic][i]||'(not attempted)'}\nScore: ${sc!==undefined?sc+' / '+q.marks+' marks':'not marked'}\nMark scheme:\n`;
+      q.ms.forEach(m=>o+=`  • ${m}\n`);
+      o+=`Model answer: ${q.model}\n\n`;
+    });
+  });
+  let td=0,ts=0,ta=0;
+  ['static','current','components'].forEach(t=>{
+    CQ[t].forEach((q,i)=>{ta+=q.marks;if(chScores[t][i]!==undefined)ts+=chScores[t][i];if((chAnswers[t][i]||'')!=='')td++;});
+  });
+  o+=`CHALLENGE SCORE SUMMARY:\nAttempted: ${td} questions\nTotal score: ${ts} / ${ta} marks\n`;
+  document.getElementById('sum-area').style.display='block';
+  document.getElementById('sum-text').value=o;
+}
+
+function copySummary(){
+  const t=document.getElementById('sum-text');t.select();document.execCommand('copy');
+  const ok=document.getElementById('copy-ok');ok.style.display='inline';
+  setTimeout(()=>ok.style.display='none',2500);
+}
+
+['static','current','components'].forEach(t=>{buildKW(t);buildEQ(t);buildSA(t);buildPQ(t);buildCH(t);});
+updateCHStats();
+</script>
